@@ -12,3 +12,41 @@ function Mapbox(selector) {
 
     this.on = this._map.on;
 }
+
+Mapbox.prototype.center = function(coordinates) {
+    this._map.setView(coordinates, 17);
+};
+
+Mapbox.prototype.road = function(data, road) {
+    if (road) {
+        road.addLatLng(data.start);
+        road.addLatLng(data.end);
+        return road;
+    }
+    var road = L.polyline([data.start, data.end]);
+    this._map.addLayer(road);
+    return road;
+};
+
+Mapbox.prototype.establishment = function(data) {
+    var marker = L.marker(data.coordinates);
+    this._map.addLayer(marker);
+    return marker;
+};
+
+Mapbox.prototype.display = function(data) {
+    if (data instanceof Array) {
+        var road = null;
+        for (var i = 0; i < data.length; i++) {
+            var object = data[i];
+            if (object.type === 'road') {
+                road = this.road(object, road);
+            } else {
+                this.establishment(object);
+            }
+        }
+    } else if (data instanceof Object) {
+        this.establishment(data);
+        this.center(data.coordinates);
+    }
+};
