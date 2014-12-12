@@ -1,6 +1,6 @@
-class Edge:
+class Edge(object):
 
-    def __init__(self, source_vertex, destination_vertex, weight):
-        self._source = source_vertex
-        self._destination = destination_vertex
-        self._weight = weight
+    def __init__(self, id, source_vertex, destination_vertex, weight):
+        self.source = source_vertex
+        self.destination = destination_vertex
+        self.weight = weight

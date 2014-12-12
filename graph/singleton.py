@@ -1,4 +1,4 @@
-class Singleton:
+class Singleton(object):
 
     def __init__(self, decorated_class):
         self._decorated = decorated_class
