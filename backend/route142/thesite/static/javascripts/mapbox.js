@@ -11,10 +11,22 @@ function Mapbox(selector) {
     });
 
     this.on = this._map.on;
+    this._features = [];
 }
 
 Mapbox.prototype.center = function(coordinates) {
     this._map.setView(coordinates, 17);
+};
+
+Mapbox.prototype.fit = function(bounds) {
+    this._map.fitBounds(bounds);
+};
+
+Mapbox.prototype.clear = function() {
+    for (var i in this._features) {
+        this._map.removeLayer(this._features[i]);
+    }
+    this._features = [];
 };
 
 Mapbox.prototype.road = function(data) {
@@ -31,16 +43,22 @@ Mapbox.prototype.establishment = function(data) {
 
 Mapbox.prototype.display = function(data) {
     if (data instanceof Array) {
+        this._features = [];
         for (var i = 0; i < data.length; i++) {
             var object = data[i];
             if (object.type === 'road') {
-                this.road(object);
+                var road = this.road(object);
+                this._features.push(road);
             } else {
-                this.establishment(object);
+                var marker = this.establishment(object);
+                this._features.push(marker);
             }
         }
+        var features = L.featureGroup(this._features);
+        this.fit(features.getBounds());
     } else if (data instanceof Object) {
-        this.establishment(data);
+        var marker = this.establishment(data);
+        this._features.push(marker);
         this.center(data.coordinates);
     }
 };

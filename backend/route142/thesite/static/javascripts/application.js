@@ -41,6 +41,15 @@ var data = [
     }
 ];
 
+// SIMULATE AJAX REQUEST TO URL ENDPOINT
+// $.ajax({
+//     url: endpoints.search,
+//     method: 'POST',
+//     data: data,
+//     success: function(data) {
+
+//     }
+// });
 setTimeout(function() {
     map.display(data);
 }, 3000);
