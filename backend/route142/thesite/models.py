@@ -21,21 +21,22 @@ class Point(models.Model):
 
 
 class Connection(models.Model):
-    vertex1 = models.ForeignKey(Point, related_name='connections')
-    vertex2 = models.ForeignKey(Point, related_name='connections')
+    vertex1 = models.ForeignKey(Point, related_name='connections1')
+    vertex2 = models.ForeignKey(Point, related_name='connections2')
     distance = models.FloatField()
+    oneway = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        res = ""
-        if self.vertex1.is_landmark:
-            res += self.vertex1.name + " - "
-        else:
-            res += str(self.vertex1.pk) + " - "
+    # def __unicode__(self):
+    #     res = ""
+    #     if self.vertex1.is_landmark and self.vertex1.name:
+    #         res += self.vertex1.name + " - "
+    #     else:
+    #         res += str(self.vertex1.pk) + " - "
 
-        if self.vertex2.is_landmark:
-            res += self.vertex2.name
-        else:
-            res += str(self.vertex2.pk)
+    #     if self.vertex2.is_landmark and self.vertex2.name:
+    #         res += self.vertex2.name
+    #     else:
+    #         res += str(self.vertex2.pk)
 
 
 class Traffic(models.Model):
