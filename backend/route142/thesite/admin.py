@@ -1,3 +1,7 @@
 from django.contrib import admin
+from models import Point, Connection, Traffic
 
-# Register your models here.
+
+admin.site.register(Point)
+admin.site.register(Connection)
+admin.site.register(Traffic)
