@@ -3,7 +3,7 @@ import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
-from models import Point
+from models import Point, Connection
 from graph.graph import Graph
 from graph.astar import AStar
 
@@ -15,7 +15,8 @@ class IndexView(TemplateView):
 class InfoQueryView(View):
 
     def get(self, *args, **kwargs):
-        query = self.request.GET['query']
+        data = json.loads(self.request.GET['data'])
+        query = data['query']
         results = Point.objects.filter(name__icontains=query)
         results_list = []
         for result in results:
@@ -53,7 +54,7 @@ class GetPathView(View):
         dest_id = self.request.GET['destination']
         # g = Graph.get_instance()
         source = Point.objects.get(pk=source_id)
-        destination = Point.objects.get(pk=destination_id)
+        destination = Point.objects.get(pk=dest_id)
         path = AStar().get_path(source, destination)
         results_list = []
         if len(path) > 1:
@@ -61,12 +62,13 @@ class GetPathView(View):
             results_list.append(s)
             index = 1
             while index < len(path) - 1:
-                p1 = Point.objects.get(pk=path[index].source.id)
-                p2 = Point.objects.get(pk=path[index].destination.id)
+                con = Connection.objects.get(pk=path[index])
+                p1 = con.vertex1
+                p2 = con.vertex2
                 p = self.parse_edge(p1, p2)
                 results_list.append(p)
                 index += 2
-            s = self.parse_point(Point.objects.get(pk=path[-1].id))
+            s = self.parse_point(Point.objects.get(pk=path[-1]))
             results_list.append(s)
         return HttpResponse(json.dumps(results_list))
 
