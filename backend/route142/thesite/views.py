@@ -50,26 +50,31 @@ class NearPointsView(View):
 class GetPathView(View):
 
     def get(self, *args, **kwargs):
-        source_id = self.request.GET['source']
-        dest_id = self.request.GET['destination']
+        data = json.loads(self.request.GET['data'])
+        source_id = data['source']
+        dest_id = data['destination']
         # g = Graph.get_instance()
         source = Point.objects.get(pk=source_id)
         destination = Point.objects.get(pk=dest_id)
-        path = AStar().get_path(source, destination)
         results_list = []
-        if len(path) > 1:
-            s = self.parse_point(Point.objects.get(pk=path[0]))
-            results_list.append(s)
-            index = 1
-            while index < len(path) - 1:
-                con = Connection.objects.get(pk=path[index])
-                p1 = con.vertex1
-                p2 = con.vertex2
-                p = self.parse_edge(p1, p2)
-                results_list.append(p)
-                index += 2
-            s = self.parse_point(Point.objects.get(pk=path[-1]))
-            results_list.append(s)
+        try:
+            path = AStar().get_path(source, destination)
+            print len(path)
+            if len(path) > 1:
+                s = self.parse_point(Point.objects.get(pk=path[0]))
+                results_list.append(s)
+                index = 1
+                while index < (len(path) - 1):
+                    con = Connection.objects.get(pk=path[index])
+                    p1 = con.vertex1
+                    p2 = con.vertex2
+                    p = self.parse_edge(p1, p2)
+                    results_list.append(p)
+                    index += 2
+                s = self.parse_point(Point.objects.get(pk=path[-1]))
+                results_list.append(s)
+        except Exception:
+            pass
         return HttpResponse(json.dumps(results_list))
 
     def parse_point(self, point):
@@ -86,6 +91,6 @@ class GetPathView(View):
             'type': 'road',
             'start': [source.lat, source.lon], 
             'end': [dest.lat, dest.lon],
-            traffic: 'light'
+            'traffic': 'light'
         }
         return data
