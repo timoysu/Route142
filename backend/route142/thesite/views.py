@@ -11,7 +11,7 @@ class IndexView(TemplateView):
 
 class InfoQueryView(View):
 
-    def get(self, **kwargs):
+    def get(self, *args, **kwargs):
         query = self.request.GET['query']
         results = Point.objects.filter(name__icontains=query)
         results_list = []
