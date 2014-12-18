@@ -59,6 +59,27 @@
 #         to_write = []
 # Point.objects.bulk_create(to_write)
 
+from graph.graph import Graph
+from thesite.models import Point, Connection
+
+
+g = Graph.get_instance()
+
+points = Point.objects.all()
+for p in points:
+    g.add_vertex(p.pk)
+
+connections = Connection.objects.all()
+for c in connections:
+    g.add_edge(c.pk, c.vertex1.pk, c.vertex2.pk, c.distance, two_way=(not c.oneway))
+
+print "Initializing matrix..."
+g.initialize_matrix()
+
+print "Computing shortest path..."
+g.floyd_algorithm()
+
+
 
 
 
