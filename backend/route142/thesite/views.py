@@ -59,3 +59,9 @@ class GetPathView(View):
     def parse_point(self, point):
         pass
 
+class GetPathViewStar(View):
+
+    def get(self, *args, **kwargs):
+        source_id = self.request.GET['source']
+        destination_id = self.request.GET['destination']
+        
