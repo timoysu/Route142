@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css">
         <link rel="stylesheet" href="stylesheets/application.css">
         <link rel="stylesheet" href="stylesheets/mapbox.css">
+        <link rel="stylesheet" href="stylesheets/modal.css">
         <script>
             // BACKEND SHOULD DEFINE THESE
             var endpoints = {};
@@ -15,8 +16,27 @@
     <body>
         <div id="map"></div>
 
+        <div id="modal">
+            <div class="left">
+                <img src="sample.jpg" alt="Name of place">
+            </div>
+            <div class="right">
+                <h1 class="dotdot">Cut the cheese bavarian bergkase cottage cheese.</h1>
+                <div class="description">
+                    <p>Cut the cheese bavarian bergkase cottage cheese. Cheese and biscuits stilton cauliflower cheese cut the cheese brie rubber cheese red leicester cheese and biscuits. Cheeseburger cheesy grin cheese and wine squirty cheese everyone loves pecorino pecorino lancashire. Melted cheese rubber cheese hard cheese halloumi roquefort cheeseburger cheesy grin cheesy grin. Red leicester fondue bocconcini.</p>
+                </div>
+            </div>
+            <div class="close">close</div>
+        </div>
+
         <script src="https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="javascripts/mapbox.js"></script>
         <script src="javascripts/application.js"></script>
+        <script type="text/javascript">
+            $("#modal .close").click(function() {
+                $(this).parent().fadeOut();
+            });
+        </script>
     </body>
 </html>
