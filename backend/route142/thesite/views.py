@@ -22,6 +22,7 @@ class InfoQueryView(View):
             result_json['type'] = result.typ
             result_json['coordinates'] = [result.lat, result.lon]
             result_json['name'] = result.name
+            result_json['id'] = result.pk
             results_list.append(result_json)
         return HttpResponse(json.dumps(results_list))
 
