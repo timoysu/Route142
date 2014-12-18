@@ -23,7 +23,6 @@ class Path(object):
         temp = copy.deepcopy(self)
         temp.destination = path.destination
         temp.total_weight = self.total_weight + path.total_weight
-        for i in path.path[1:]:
-            temp.path.append(i)
+        temp.path += path.path[1:]
         return temp
 
