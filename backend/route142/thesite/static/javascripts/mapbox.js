@@ -121,7 +121,15 @@ function request(url, data, callback) {
 }
 
 function marker_icon(type) {
-    var url = assets + 'images/default.png';
+    var filename = 'default.png';
+    if (type === 'hospital') {
+        filename = 'hospital.png';
+    } else if (type === 'fire_station') {
+        filename = 'firestation.png';
+    } else if (type === 'townhall') {
+        filename = 'office_agency.png';
+    }
+    var url = assets + 'images/' + filename;
     return L.icon({
         iconUrl: url,
         iconRetinaUrl: url,
