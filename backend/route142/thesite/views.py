@@ -39,7 +39,7 @@ class NearPointsView(View):
         results_list = []
         for p in points:
             point = {'coordinates': [p.lat, p.lon], 'name': p.name,
-                     'type': p.typ, 'is_landmark': p.is_landmark}
+                     'type': p.typ, 'is_landmark': p.is_landmark, 'id': p.pk}
             results_list.append(point)
         return HttpResponse(json.dumps(results_list))
 
@@ -53,16 +53,25 @@ class GetPathView(View):
         path = g.get_path(source_id, destination_id).path
         results_list = []
         if len(path) > 1:
-            s = Point.objects.get(pk=path[0].id)
+            s = self.parse_point(Point.objects.get(pk=path[0].id))
+            results_list.append(s)
             index = 1
             while index < len(path) - 1:
-                pass
+                p1 = Point.objects.get(pk=path[index].source.id)
+                p2 = Point.objects.get(pk=path[index].destination.id)
+                p = self.parse_edge(p1, p2)
+                results_list.append(p)
+                index += 2
+            s = self.parse_point(Point.objects.get(pk=path[-1].id))
+            results_list.append(s)
+        return HttpResponse(json.dumps(results_list))
 
     def parse_point(self, point):
         data = {
             'type': point.typ,
             'coordinates': [point.lat, point.lon],
             'name': point.name,
+            'id': point.pk
         }
         return data
 
