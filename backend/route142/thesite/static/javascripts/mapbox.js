@@ -103,8 +103,9 @@ function request(url, data, callback) {
     $.ajax({
         url: url,
         method: 'GET',
-        data: data,
+        data: {data: JSON.stringify(data)},
         success: function(data) {
+            console.log(data)
             data = JSON.parse(data);
             if (typeof callback === 'function') {
                 callback(data);

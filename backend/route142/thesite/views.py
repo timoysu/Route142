@@ -29,8 +29,9 @@ class InfoQueryView(View):
 class NearPointsView(View):
 
     def get(self, *args, **kwargs):
-        nw = json.loads(self.request.GET['northwest'])
-        se = json.loads(self.request.GET['southeast'])
+        data = json.loads(self.request.GET['data'])
+        nw = data['northwest']
+        se = data['southeast']
         points = Point.objects.filter(
             lat__lte=nw[0], lat__gte=se[0], lon__gte=nw[1], lon__lte=se[1]).\
             all()
