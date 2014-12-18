@@ -10,8 +10,17 @@ function Mapbox(selector) {
         maxBounds: mapBounds
     });
 
+    var self = this;
     this.on = this._map.on;
     this._features = [];
+
+    this._map.on('moveend', function(e) {
+        var bounds = self._map.getBounds();
+        var northwest = bounds.getNorthWest();
+        var southeast = bounds.getSouthEast();
+        bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
+        request(endpoints.bounded_query, bounds, this.display);
+    });
 }
 
 Mapbox.prototype.center = function(coordinates) {
@@ -54,7 +63,8 @@ Mapbox.prototype.establishment = function(data, force_popup) {
     return marker;
 };
 
-Mapbox.prototype.display = function(data) {
+Mapbox.prototype.display = function(data, force_popup) {
+    force_popup = force_popup === undefined ? true : force_popup;
     if (data instanceof Array) {
         this._features = [];
         for (var i = 0; i < data.length; i++) {
@@ -63,14 +73,14 @@ Mapbox.prototype.display = function(data) {
                 var road = this.road(object);
                 this._features.push(road);
             } else {
-                var marker = this.establishment(object, true);
+                var marker = this.establishment(object, force_popup);
                 this._features.push(marker);
             }
         }
         var features = L.featureGroup(this._features);
         this.fit(features.getBounds());
     } else if (data instanceof Object) {
-        var marker = this.establishment(data, true);
+        var marker = this.establishment(data, force_popup);
         this._features.push(marker);
         this.center(data.coordinates);
     }
@@ -86,4 +96,18 @@ function traffic_indicator_color(traffic) {
         return 'red';
     }
     return 'white';
+}
+
+function request(url, data, callback) {
+    $.ajax({
+        url: url,
+        method: 'GET',
+        data: data,
+        success: function(data) {
+            data = JSON.parse(data);
+            if (typeof callback === 'function') {
+                callback(data);
+            }
+        }
+    });
 }
