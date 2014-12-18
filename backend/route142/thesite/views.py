@@ -33,7 +33,8 @@ class NearPointsView(View):
         nw = data['northwest']
         se = data['southeast']
         points = Point.objects.filter(
-            lat__lte=nw[0], lat__gte=se[0], lon__gte=nw[1], lon__lte=se[1]).\
+            lat__lte=nw[0], lat__gte=se[0], lon__gte=nw[1], lon__lte=se[1],
+            is_landmark=True).\
             all()
         results_list = []
         for p in points:
@@ -47,7 +48,7 @@ class GetPathView(View):
 
     def get(self, *args, **kwargs):
         source_id = self.request.GET['source']
-        source_id = self.request.GET['destination']
+        dest_id = self.request.GET['destination']
         g = Graph.get_instance()
         path = g.get_path(source_id, destination_id).path
         results_list = []
@@ -58,5 +59,19 @@ class GetPathView(View):
                 pass
 
     def parse_point(self, point):
-        pass
+        data = {
+            'type': point.typ,
+            'coordinates': [point.lat, point.lon],
+            'name': point.name,
+        }
+        return data
+
+    def parse_edge(self, source, dest):
+        data = {
+            'type': 'road',
+            'start': [source.lat, source.lon], 
+            'end': [dest.lat, dest.lon],
+            traffic: 'light'
+        }
+        return data
 
