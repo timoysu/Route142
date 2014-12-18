@@ -19,7 +19,9 @@ function Mapbox(selector) {
         var northwest = bounds.getNorthWest();
         var southeast = bounds.getSouthEast();
         bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
-        request(endpoints.bounded_query, bounds, this.display);
+        request(endpoints.bounded_query, bounds, function(data) {
+            self.display(data);
+        });
     });
 }
 
@@ -64,8 +66,11 @@ Mapbox.prototype.establishment = function(data, force_popup, clear) {
     return marker;
 };
 
-Mapbox.prototype.display = function(data, force_popup) {
-    force_popup = force_popup === undefined ? true : force_popup;
+Mapbox.prototype.display = function(data, force_popup, clear, fit) {
+    force_popup = params(force_popup, false);
+    if (params(clear, true)) {
+        this.clear();
+    }
     if (data instanceof Array) {
         this._features = [];
         for (var i = 0; i < data.length; i++) {
@@ -79,7 +84,9 @@ Mapbox.prototype.display = function(data, force_popup) {
             }
         }
         var features = L.featureGroup(this._features);
-        this.fit(features.getBounds());
+        if (params(fit, false)) {
+            this.fit(features.getBounds());
+        }
     } else if (data instanceof Object) {
         var marker = this.establishment(data, force_popup);
         this._features.push(marker);
@@ -103,9 +110,8 @@ function request(url, data, callback) {
     $.ajax({
         url: url,
         method: 'GET',
-        data: {data: JSON.stringify(data)},
+        data: { data: JSON.stringify(data) },
         success: function(data) {
-            console.log(data)
             data = JSON.parse(data);
             if (typeof callback === 'function') {
                 callback(data);
