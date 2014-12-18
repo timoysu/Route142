@@ -44,8 +44,9 @@ Mapbox.prototype.road = function(data) {
     return road;
 };
 
-Mapbox.prototype.establishment = function(data, force_popup) {
-    force_popup = force_popup || false;
+Mapbox.prototype.establishment = function(data, force_popup, clear) {
+    force_popup = params(force_popup, false);
+    clear = params(clear, true);
     var marker = L.marker(data.coordinates);
     var popup = L.popup({ 
         closeButton: false, 
@@ -111,4 +112,8 @@ function request(url, data, callback) {
             }
         }
     });
+}
+
+function params(param, normal) {
+    return param === undefined ? normal : param;
 }
