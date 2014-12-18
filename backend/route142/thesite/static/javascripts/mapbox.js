@@ -19,7 +19,9 @@ function Mapbox(selector) {
         var northwest = bounds.getNorthWest();
         var southeast = bounds.getSouthEast();
         bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
-        request(endpoints.bounded_query, bounds, this.display);
+        request(endpoints.bounded_query, bounds, function(data) {
+            self.display(data);
+        });
     });
 }
 
@@ -44,13 +46,14 @@ Mapbox.prototype.road = function(data) {
     return road;
 };
 
-Mapbox.prototype.establishment = function(data, force_popup) {
-    force_popup = force_popup || false;
-    var marker = L.marker(data.coordinates);
+Mapbox.prototype.establishment = function(data, force_popup, clear) {
+    force_popup = params(force_popup, false);
+    clear = params(clear, true);
+    var marker = L.marker(data.coordinates, { icon: marker_icon(data.type) });
     var popup = L.popup({ 
         closeButton: false, 
         closeOnClick: false, 
-        offset: [0, -25], 
+        offset: [0, -22], 
         className: 'mapbox-popup'
     }).setContent(data.name);
     if (force_popup) {
@@ -63,8 +66,11 @@ Mapbox.prototype.establishment = function(data, force_popup) {
     return marker;
 };
 
-Mapbox.prototype.display = function(data, force_popup) {
-    force_popup = force_popup === undefined ? true : force_popup;
+Mapbox.prototype.display = function(data, force_popup, clear, fit) {
+    force_popup = params(force_popup, false);
+    if (params(clear, true)) {
+        this.clear();
+    }
     if (data instanceof Array) {
         this._features = [];
         for (var i = 0; i < data.length; i++) {
@@ -78,7 +84,9 @@ Mapbox.prototype.display = function(data, force_popup) {
             }
         }
         var features = L.featureGroup(this._features);
-        this.fit(features.getBounds());
+        if (params(fit, false)) {
+            this.fit(features.getBounds());
+        }
     } else if (data instanceof Object) {
         var marker = this.establishment(data, force_popup);
         this._features.push(marker);
@@ -102,7 +110,7 @@ function request(url, data, callback) {
     $.ajax({
         url: url,
         method: 'GET',
-        data: data,
+        data: { data: JSON.stringify(data) },
         success: function(data) {
             data = JSON.parse(data);
             if (typeof callback === 'function') {
@@ -110,4 +118,19 @@ function request(url, data, callback) {
             }
         }
     });
+}
+
+function marker_icon(type) {
+    var url = assets + 'images/default.png';
+    return L.icon({
+        iconUrl: url,
+        iconRetinaUrl: url,
+        iconSize: [32, 37],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -22]
+    });
+}
+
+function params(param, normal) {
+    return param === undefined ? normal : param;
 }

@@ -69,6 +69,6 @@ var establishment = {
 
 //     }
 // });
-setTimeout(function() {
-    map.display(data);
-}, 3000);
+// setTimeout(function() {
+//     map.display(data);
+// }, 3000);
