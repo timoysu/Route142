@@ -1,0 +1,90 @@
+NOTE:
+dummy endpoints gigamit for ui
+
+
+
+
+
+#gives auto suggestions
+def route_test(request):
+    try:
+        term = request.GET.get('term').strip()
+
+        if not term:
+            return HttpResponse()
+
+        return_data = []
+
+        # parsing 'from' and 'go to' indicators
+        temp_term = term.split(' ')
+        loc = ""; label = ""; value = "";
+        if 'from' in temp_term and not 'to' in temp_term and len(temp_term) > 1:
+            loc = " ".join(temp_term[temp_term.index('from') + 1:])
+            query = search(loc)
+            if query:
+                label = 'from ' + query[0][0] + ' to '
+
+        elif 'go' in temp_term and not 'from' in temp_term and len(temp_term) > 2:
+            loc = " ".join(temp_term[temp_term.index('to') + 1:])
+            query = search(loc)
+            if query:
+                label = 'go to ' + query[0][0] + ' from '
+
+        elif 'from' in temp_term and 'to' in temp_term:
+            if temp_term.index('from') < temp_term.index('to'):
+                loc = " ".join(temp_term[temp_term.index('to') + 1:])
+                src = " ".join(temp_term[temp_term.index('from') + 1: temp_term.index('to')])
+                query = search(loc)
+                if query:
+                    label = 'from ' + src + ' to ' + query[0][0]
+            else:
+                dest = " ".join(temp_term[temp_term.index('to') + 1: temp_term.index('from')])
+                loc = " ".join(temp_term[temp_term.index('from') + 1:])
+                query = search(loc)
+                if query:
+                    label = 'go to ' + dest + ' from ' + query[0][0]
+        else:
+            query = search(term)
+            if len(query):
+                label = 'show ' + query[0][0]
+                # default suggestions
+                return_data.append({'label': 'from ' + query[0][0] + ' to ', 'value': 'from ' + query[0][0] + ' to '})
+                return_data.append({'label': 'go to ' + query[0][0] + ' from ', 'value': 'go to ' + query[0][0] + ' from '})
+
+        value = label
+
+        if query:
+            return_data.insert(0, {'label': label, 'value': value})
+
+            if len(query) > 1:
+                for p in query[1:3]:
+                    return_data.append({'label': p[0], 'value': p[0]})
+            return HttpResponse(simplejson.dumps(return_data), content_type='application/json')
+
+        else:
+            return HttpResponseBadRequest()
+
+    except Exception, e:
+        print e
+        return HttpResponseBadRequest()
+
+# simulates DB querying
+def search(term):
+
+    places = [('SM City', 2), ('UP', 3), ('IT', 4), ('Robinsons', 5), ('SM Market', 6), ('Toyota', 7)]
+
+    query = [p for p in places if term.lower() == p[0].lower() or term.lower() in p[0].lower() and term.lower()[0] == p[0].lower()[0]]
+    return query
+
+# simulates searching
+def map(request):
+    src = [6, 7],
+    dest = [4, 4],
+    path = [[4, 5], [4, 6], [5, 3], [5, 5], [5, 7], [6, 7]]
+    data = {
+        'src': src,
+        'dest': dest,
+        'path': path
+    }
+
+    return HttpResponse(simplejson.dumps(data), content_type='application/json')
