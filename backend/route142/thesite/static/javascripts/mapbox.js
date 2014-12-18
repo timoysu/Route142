@@ -15,7 +15,7 @@ function Mapbox(selector) {
 }
 
 Mapbox.prototype.center = function(coordinates) {
-    this._map.setView(coordinates, 17);
+    this._map.setView(coordinates, 16);
 };
 
 Mapbox.prototype.fit = function(bounds) {
@@ -35,9 +35,15 @@ Mapbox.prototype.road = function(data) {
     return road;
 };
 
-Mapbox.prototype.establishment = function(data) {
+Mapbox.prototype.establishment = function(data, popup) {
+    popup = popup || false;
     var marker = L.marker(data.coordinates);
+    var popup = L.popup({ className: 'mapbox-popup' }).setContent(data.name);
+    marker.bindPopup(popup).openPopup();
     this._map.addLayer(marker);
+    if (popup) {
+        marker.openPopup();
+    }
     return marker;
 };
 
@@ -50,14 +56,14 @@ Mapbox.prototype.display = function(data) {
                 var road = this.road(object);
                 this._features.push(road);
             } else {
-                var marker = this.establishment(object);
+                var marker = this.establishment(object, true);
                 this._features.push(marker);
             }
         }
         var features = L.featureGroup(this._features);
         this.fit(features.getBounds());
     } else if (data instanceof Object) {
-        var marker = this.establishment(data);
+        var marker = this.establishment(data, true);
         this._features.push(marker);
         this.center(data.coordinates);
     }

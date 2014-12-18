@@ -2,6 +2,8 @@ var map = new Mapbox('#map');
 
 // THIS IS A SAMPLE OF THE FORMAT OF THE DATA THAT THE BACKEND SHOULD
 // RETURN WHEN WE REQUEST FOR THE PATH FROM POINT A TO POINT B
+// REQUEST FORMAT:
+// { from: (String) ORIGIN, to: (String) DESTINATION }
 var data = [
     { 
         type: 'road', 
@@ -40,6 +42,17 @@ var data = [
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.' 
     }
 ];
+
+// THIS IS A SAMPLE OF THE FORMAT OF THE DATA THAT THE BACKEND SHOULD
+// RETURN WHEN WE REQUEST FOR INFORMATION ABOUT A CERTAIN ESTABLISHMENT
+// REQUEST FORMAT
+// { query: (String) ESTABLISHMENT }
+var establishment = {
+    type: 'school', 
+    coordinates: [10.322983539725495, 123.89861583709715], 
+    name: 'University of the Philippines Cebu', 
+    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.' 
+};
 
 // SIMULATE AJAX REQUEST TO URL ENDPOINT
 // $.ajax({
