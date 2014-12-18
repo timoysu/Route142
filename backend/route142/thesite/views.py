@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, View
 
 from models import Point
 from graph.graph import Graph
+from graph.astar import AStar
 
 
 class IndexView(TemplateView):
@@ -50,11 +51,13 @@ class GetPathView(View):
     def get(self, *args, **kwargs):
         source_id = self.request.GET['source']
         dest_id = self.request.GET['destination']
-        g = Graph.get_instance()
-        path = g.get_path(source_id, destination_id).path
+        # g = Graph.get_instance()
+        source = Point.objects.get(pk=source_id)
+        destination = Point.objects.get(pk=destination_id)
+        path = AStar().get_path(source, destination)
         results_list = []
         if len(path) > 1:
-            s = self.parse_point(Point.objects.get(pk=path[0].id))
+            s = self.parse_point(Point.objects.get(pk=path[0]))
             results_list.append(s)
             index = 1
             while index < len(path) - 1:
@@ -84,4 +87,3 @@ class GetPathView(View):
             traffic: 'light'
         }
         return data
-

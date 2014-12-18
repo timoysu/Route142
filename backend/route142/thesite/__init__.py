@@ -59,37 +59,37 @@
 #         to_write = []
 # Point.objects.bulk_create(to_write)
 
-from graph.graph import Graph
-from thesite.models import Point, Connection
+# from graph.graph import Graph
+# from thesite.models import Point, Connection
 
-from django.db.models import Q
-from django.conf import settings
+# from django.db.models import Q
+# from django.conf import settings
 
-g = Graph.get_instance()
+# g = Graph.get_instance()
 
-ul = settings.UL
-lr = settings.LR
+# ul = settings.UL
+# lr = settings.LR
 
 
-if len(g._vertices) <= 0:
-    print "Initializing vertices..."
-    points = Point.objects.filter(lat__lte=ul[0], lat__gte=lr[0], lon__gte=ul[1],
-                                  lon__lte=lr[1])
+# if len(g._vertices) <= 0:
+#     print "Initializing vertices..."
+#     points = Point.objects.filter(lat__lte=ul[0], lat__gte=lr[0], lon__gte=ul[1],
+#                                   lon__lte=lr[1])
 
-    print len(points)
-    ids = []
-    for p in points:
-        g.add_vertex(p.pk)
-        ids.append(p.pk)
+#     print len(points)
+#     ids = []
+#     for p in points:
+#         g.add_vertex(p.pk)
+#         ids.append(p.pk)
 
-    print "Initializing edges..."
-    connections = Connection.objects.filter(vertex1__in=ids, vertex2__in=ids).all()
-    print len(connections)
-    for c in connections:
-        g.add_edge(c.pk, c.vertex1.pk, c.vertex2.pk, c.distance, two_way=(not c.oneway))
+#     print "Initializing edges..."
+#     connections = Connection.objects.filter(vertex1__in=ids, vertex2__in=ids).all()
+#     print len(connections)
+#     for c in connections:
+#         g.add_edge(c.pk, c.vertex1.pk, c.vertex2.pk, c.distance, two_way=(not c.oneway))
 
-    print "Initializing matrix..."
-    g.initialize_matrix()
+#     print "Initializing matrix..."
+#     g.initialize_matrix()
 
-    print "Computing shortest path..."
-    g.floyd_algorithm()
+#     print "Computing shortest path..."
+#     g.floyd_algorithm()
