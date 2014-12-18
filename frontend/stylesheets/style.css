@@ -1,0 +1,12 @@
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #ccc;
+}
+
+#search-container {
+  position: fixed;
+  z-index: 9000;
+  padding: 20px;
+  top: 2%;
+  right: 2%;
+}
