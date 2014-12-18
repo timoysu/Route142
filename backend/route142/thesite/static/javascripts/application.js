@@ -40,6 +40,12 @@ var data = [
         coordinates: [10.322983539725495, 123.89861583709715], 
         name: 'University of the Philippines Cebu', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.' 
+    },
+    {
+        type: 'landmark',
+        coordinates: [10.309894855619483, 123.89312267303467],
+        name: 'Fuente Osmena Circle',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
     }
 ];
 
