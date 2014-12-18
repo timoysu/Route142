@@ -16,7 +16,9 @@ function Mapbox(selector) {
     this._searching = false;
 
     this._map.on('moveend', function(e) {
-        self.populate.call(self);
+        if (!self._searching) {
+            self.populate.call(self);
+        }
     });
 
     $(document).on('keyup', function(e) {
@@ -49,9 +51,7 @@ Mapbox.prototype.populate = function() {
     var southeast = bounds.getSouthEast();
     bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
     request(endpoints.bounded_query, bounds, function(data) {
-        if (!self.searching) {
-            self.display(data);
-        }
+        self.display(data);
     });
 };
 
@@ -70,7 +70,7 @@ Mapbox.prototype.establishment = function(data, force_popup, clear) {
         closeOnClick: false, 
         offset: [0, -22], 
         className: 'mapbox-popup'
-    }).setContent(data.name);
+    }).setContent(data.name + ' (' + data.id + ')');
     if (force_popup) {
         popup.setLatLng(marker.getLatLng());
         this._map.addLayer(popup);
