@@ -35,15 +35,22 @@ Mapbox.prototype.road = function(data) {
     return road;
 };
 
-Mapbox.prototype.establishment = function(data, popup) {
-    popup = popup || false;
+Mapbox.prototype.establishment = function(data, force_popup) {
+    force_popup = force_popup || false;
     var marker = L.marker(data.coordinates);
-    var popup = L.popup({ className: 'mapbox-popup' }).setContent(data.name);
-    marker.bindPopup(popup).openPopup();
-    this._map.addLayer(marker);
-    if (popup) {
-        marker.openPopup();
+    var popup = L.popup({ 
+        closeButton: false, 
+        closeOnClick: false, 
+        offset: [0, -25], 
+        className: 'mapbox-popup'
+    }).setContent(data.name);
+    if (force_popup) {
+        popup.setLatLng(marker.getLatLng());
+        this._map.addLayer(popup);
+    } else {
+        marker.bindPopup(popup).openPopup();
     }
+    this._map.addLayer(marker);
     return marker;
 };
 
