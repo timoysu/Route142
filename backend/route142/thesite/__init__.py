@@ -65,12 +65,16 @@ from thesite.models import Point, Connection
 
 g = Graph.get_instance()
 
+print "Initializing vertices..."
 points = Point.objects.all()
 for p in points:
+    print p.pk
     g.add_vertex(p.pk)
 
+print "Initializing edges..."
 connections = Connection.objects.all()
 for c in connections:
+    print c.pk
     g.add_edge(c.pk, c.vertex1.pk, c.vertex2.pk, c.distance, two_way=(not c.oneway))
 
 print "Initializing matrix..."
