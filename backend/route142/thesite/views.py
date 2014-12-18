@@ -2,6 +2,7 @@ import json
 
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
+from django.db.models import Q
 
 from models import Point, Connection
 from graph.graph import Graph
@@ -17,7 +18,27 @@ class InfoQueryView(View):
     def get(self, *args, **kwargs):
         data = json.loads(self.request.GET['data'])
         query = data['query']
-        results = Point.objects.filter(name__icontains=query)
+        results = Point.objects.filter(Q(name__istartswith=query + ' ') | 
+                                       Q(name__icontains=' ' + query + ' ') |
+                                       Q(name__icontains=' ' + query) | 
+                                       Q(name__iexact=query))
+        results_list = []
+        for result in results:
+            result_json = {}
+            result_json['type'] = result.typ
+            result_json['coordinates'] = [result.lat, result.lon]
+            result_json['name'] = result.name
+            result_json['id'] = result.pk
+            results_list.append(result_json)
+        return HttpResponse(json.dumps(results_list))
+
+
+class SuggestQueryView(View):
+
+    def get(self, *args, **kwargs):
+        data = json.loads(self.request.GET['data'])
+        query = data['query']
+        results = Point.objects.filter(name__istartswith=query).all()
         results_list = []
         for result in results:
             result_json = {}
