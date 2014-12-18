@@ -49,11 +49,11 @@ Mapbox.prototype.road = function(data) {
 Mapbox.prototype.establishment = function(data, force_popup, clear) {
     force_popup = params(force_popup, false);
     clear = params(clear, true);
-    var marker = L.marker(data.coordinates);
+    var marker = L.marker(data.coordinates, { icon: marker_icon(data.type) });
     var popup = L.popup({ 
         closeButton: false, 
         closeOnClick: false, 
-        offset: [0, -25], 
+        offset: [0, -22], 
         className: 'mapbox-popup'
     }).setContent(data.name);
     if (force_popup) {
@@ -117,6 +117,17 @@ function request(url, data, callback) {
                 callback(data);
             }
         }
+    });
+}
+
+function marker_icon(type) {
+    var url = assets + 'images/default.png';
+    return L.icon({
+        iconUrl: url,
+        iconRetinaUrl: url,
+        iconSize: [32, 37],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -22]
     });
 }
 
