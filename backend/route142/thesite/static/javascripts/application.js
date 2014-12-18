@@ -49,26 +49,9 @@ var data = [
     }
 ];
 
-// THIS IS A SAMPLE OF THE FORMAT OF THE DATA THAT THE BACKEND SHOULD
-// RETURN WHEN WE REQUEST FOR INFORMATION ABOUT A CERTAIN ESTABLISHMENT
-// REQUEST FORMAT
-// { query: (String) ESTABLISHMENT }
-var establishment = {
-    type: 'school', 
-    coordinates: [10.322983539725495, 123.89861583709715], 
-    name: 'University of the Philippines Cebu', 
-    description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.' 
-};
-
-// SIMULATE AJAX REQUEST TO URL ENDPOINT
-// $.ajax({
-//     url: endpoints.search,
-//     method: 'POST',
-//     data: data,
-//     success: function(data) {
-
-//     }
-// });
-// setTimeout(function() {
-//     map.display(data);
-// }, 3000);
+function search(query) {
+    request(endpoints.information_query, { query: query }, function(data) {
+        map.searching = true;
+        map.display(data);
+    });
+}

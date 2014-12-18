@@ -13,15 +13,17 @@ function Mapbox(selector) {
     var self = this;
     this.on = this._map.on;
     this._features = [];
+    this._searching = false;
 
     this._map.on('moveend', function(e) {
-        var bounds = self._map.getBounds();
-        var northwest = bounds.getNorthWest();
-        var southeast = bounds.getSouthEast();
-        bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
-        request(endpoints.bounded_query, bounds, function(data) {
-            self.display(data);
-        });
+        self.populate.call(self);
+    });
+
+    $(document).on('keyup', function(e) {
+        if (e.keyCode === 27) {
+            self._searching = false;
+            self.populate.call(self);
+        }
     });
 }
 
@@ -38,6 +40,19 @@ Mapbox.prototype.clear = function() {
         this._map.removeLayer(this._features[i]);
     }
     this._features = [];
+};
+
+Mapbox.prototype.populate = function() {
+    var self = this;
+    var bounds = this._map.getBounds();
+    var northwest = bounds.getNorthWest();
+    var southeast = bounds.getSouthEast();
+    bounds = { northwest: [northwest.lat, northwest.lng], southeast: [southeast.lat, southeast.lng] };
+    request(endpoints.bounded_query, bounds, function(data) {
+        if (!self.searching) {
+            self.display(data);
+        }
+    });
 };
 
 Mapbox.prototype.road = function(data) {
